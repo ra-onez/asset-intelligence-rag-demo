@@ -1,0 +1,7 @@
+asset_id,asset_name,asset_type,plant_area,criticality,install_year
+P-101,Feed Water Pump,Pump,Area A,High,2017
+P-102,Cooling Water Pump,Pump,Area A,Medium,2019
+C-201,Main Air Compressor,Compressor,Area B,High,2016
+V-301,Isolation Valve,Valve,Area C,Low,2021
+HX-401,Heat Exchanger,Heat Exchanger,Area B,High,2015
+M-101,Pump Motor,Motor,Area A,Medium,2017

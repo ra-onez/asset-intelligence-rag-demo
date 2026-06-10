@@ -1,0 +1,6 @@
+inspection_id,asset_id,inspection_date,condition_score,findings,recommendation
+IN-001,P-101,2025-01-05,62,Minor seal wear and vibration observed,Monitor and inspect bearing during next maintenance window
+IN-002,C-201,2025-02-10,48,High vibration and temperature fluctuation detected,Prioritise compressor inspection before shutdown
+IN-003,HX-401,2025-02-15,55,Reduced heat transfer efficiency due to fouling,Clean tubes and inspect for corrosion
+IN-004,V-301,2025-02-20,86,Valve operating normally,Continue routine inspection
+IN-005,M-101,2025-03-01,70,Slight temperature increase under load,Check alignment with pump P-101

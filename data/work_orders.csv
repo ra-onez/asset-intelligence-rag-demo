@@ -1,0 +1,7 @@
+work_order_id,asset_id,work_type,description,status,priority,planned_date,completed_date,downtime_hours,cost
+WO-001,P-101,Corrective,Seal leakage repair,Completed,High,2025-01-10,2025-01-11,8,4200
+WO-002,C-201,Preventive,Quarterly compressor service,Completed,Medium,2025-01-15,2025-01-15,3,2500
+WO-003,HX-401,Corrective,Tube fouling cleaning,Completed,High,2025-02-01,2025-02-03,16,7200
+WO-004,P-101,Preventive,Bearing inspection,Open,High,2025-03-10,,0,1800
+WO-005,C-201,Corrective,Abnormal vibration investigation,Open,Critical,2025-03-05,,0,3500
+WO-006,V-301,Preventive,Valve lubrication,Completed,Low,2025-02-20,2025-02-20,1,400

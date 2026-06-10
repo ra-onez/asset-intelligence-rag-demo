@@ -1,0 +1,5 @@
+failure_id,asset_id,failure_date,failure_mode,downtime_hours,root_cause
+F-001,P-101,2024-11-12,Seal failure,10,Worn mechanical seal
+F-002,HX-401,2024-12-05,Fouling,14,Process fluid contamination
+F-003,C-201,2025-01-28,Vibration trip,6,Bearing wear
+F-004,P-101,2025-02-18,Bearing overheating,5,Lubrication issue
