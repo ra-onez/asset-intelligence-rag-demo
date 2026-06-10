@@ -14,7 +14,7 @@ Industrial teams often need to prioritise maintenance decisions using fragmented
 - Risk Ranking: explainable risk scores with Low, Medium, High, and Critical levels.
 - Asset Detail: drill-down into work orders, inspections, failures, and risk reasons.
 - Knowledge Graph: NetworkX graph linking assets to work orders, inspections, failures, and related equipment.
-- AI Assistant: deterministic source-backed answers over the CSV data.
+- AI Assistant: deterministic source-backed answers plus local RAG-style retrieval over the CSV data.
 - About Project: context on industrial asset intelligence, maintenance analytics, RAG-style answering, and synthetic data.
 
 ## Risk Scoring
@@ -38,6 +38,8 @@ Each asset receives a transparent `risk_reason` so the ranking can be explained 
 - Plotly
 - NetworkX
 - Matplotlib
+- Sentence Transformers
+- ChromaDB
 - CSV data
 
 ## Project Structure
@@ -56,7 +58,8 @@ asset-intelligence-rag-demo/
 |   |-- data_loader.py
 |   |-- risk_scoring.py
 |   |-- assistant.py
-|   `-- graph_builder.py
+|   |-- graph_builder.py
+|   `-- rag_engine.py
 `-- docs/
     `-- screenshots/
         |-- risk_ranking.png
@@ -101,6 +104,23 @@ The AI Assistant supports questions such as:
 
 Answers include supporting sources such as `assets.csv: C-201`, `work_orders.csv: WO-005`, `inspections.csv: IN-002`, and `failure_events.csv: F-003`.
 
+## Local RAG Retrieval
+
+RAG means retrieval-augmented generation. In this project, the current implementation focuses on the retrieval part without using a paid API or external LLM.
+
+The app converts each row from the CSV files into a readable text chunk:
+
+- Asset rows become asset register descriptions.
+- Work order rows become maintenance history descriptions.
+- Inspection rows become condition, finding, and recommendation descriptions.
+- Failure rows become failure mode, root cause, and downtime descriptions.
+
+Each chunk keeps metadata for the source file, record ID, and asset ID. The `SimpleRAGEngine` in `src/rag_engine.py` embeds those chunks with the local Sentence Transformers model `all-MiniLM-L6-v2` and stores them in an in-memory ChromaDB collection.
+
+When a user clicks **Ask with RAG Retrieval**, the app embeds the question, retrieves the top matching records, displays a short evidence-based answer, lists the sources, and shows the retrieved context chunks in expandable sections.
+
+This version uses local retrieval only. A future improvement would be to add optional LLM generation over the retrieved context while keeping the same source citations.
+
 ## Screenshots
 
 ### Risk Ranking
@@ -115,7 +135,8 @@ Answers include supporting sources such as `assets.csv: C-201`, `work_orders.csv
 
 - Add more realistic asset hierarchy and equipment relationships.
 - Add richer synthetic inspection narratives and maintenance notes.
-- Add vector search over maintenance documents for a fuller RAG workflow.
+- Add optional LLM generation over retrieved context.
+- Add vector search over larger maintenance documents and inspection reports.
 - Add trend charts for inspection condition and downtime over time.
 - Add predictive maintenance modelling once more historical data exists.
 - Add deployment packaging with Docker or Streamlit Community Cloud.

@@ -7,6 +7,7 @@ import streamlit as st
 from src.assistant import SUPPORTED_QUESTIONS, answer_question
 from src.data_loader import load_data
 from src.graph_builder import build_graph
+from src.rag_engine import SimpleRAGEngine
 from src.risk_scoring import calculate_risk_scores
 
 
@@ -24,6 +25,16 @@ def get_data():
 @st.cache_data
 def get_risk_scores(assets, work_orders, inspections, failures):
     return calculate_risk_scores(assets, work_orders, inspections, failures)
+
+
+@st.cache_resource
+def get_rag_engine(_assets, _work_orders, _inspections, _failures):
+    return SimpleRAGEngine().build_index(
+        _assets,
+        _work_orders,
+        _inspections,
+        _failures,
+    )
 
 
 def format_dates(df):
@@ -192,7 +203,7 @@ def render_knowledge_graph(assets, work_orders, inspections, failures):
 def render_ai_assistant(assets, work_orders, inspections, failures, risk_df):
     render_page_intro(
         "AI Assistant",
-        "Ask deterministic, source-backed questions over the project CSV data.",
+        "Ask source-backed questions over the project CSV data.",
     )
 
     selected_example = st.selectbox("Example questions", SUPPORTED_QUESTIONS)
@@ -203,6 +214,43 @@ def render_ai_assistant(assets, work_orders, inspections, failures, risk_df):
         st.markdown(
             answer_question(question, risk_df, assets, work_orders, inspections, failures)
         )
+
+    st.divider()
+    st.subheader("RAG Retrieval")
+    st.write(
+        "This retrieves the most relevant local CSV records using sentence-transformer "
+        "embeddings and ChromaDB. It does not call a paid API or external LLM."
+    )
+
+    if st.button("Ask with RAG Retrieval"):
+        with st.spinner("Building local retrieval index and searching records..."):
+            try:
+                rag_engine = get_rag_engine(assets, work_orders, inspections, failures)
+                rag_result = rag_engine.answer(question, top_k=5)
+            except ImportError as exc:
+                st.error(
+                    "RAG dependencies are not installed yet. Run "
+                    "`pip install -r requirements.txt` and restart Streamlit."
+                )
+                st.exception(exc)
+                return
+
+        st.markdown("#### RAG Answer")
+        st.write(rag_result["answer"])
+
+        st.markdown("#### Sources")
+        for source in rag_result["sources"]:
+            st.markdown(f"- {source['source_file']}: {source['record_id']}")
+
+        st.markdown("#### Retrieved Context")
+        for index, item in enumerate(rag_result["retrieved"], start=1):
+            metadata = item["metadata"]
+            label = (
+                f"{index}. {metadata['source_file']}: {metadata['record_id']} "
+                f"(asset {metadata['asset_id']})"
+            )
+            with st.expander(label):
+                st.write(item["text"])
 
     st.subheader("Supported Questions")
     st.write("The assistant is intentionally small and transparent for this prototype.")
