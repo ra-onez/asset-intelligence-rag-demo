@@ -1,174 +1,74 @@
 # Industrial Asset Intelligence RAG Demo
 
-This is a small data science and AI prototype for industrial asset management. The project connects asset registers, work orders, inspection findings, failure events, risk scoring, and a simple assistant interface into one Streamlit dashboard.
+A Streamlit portfolio project for industrial asset intelligence in asset-intensive industries such as mining, LNG, oil and gas, power, utilities, and process plants.
 
-I built this project to explore how AI, data analysis, graph-based asset modelling, and RAG-style question answering can support asset-intensive industries such as mining, LNG, oil and gas, power, utilities, and process plants.
+The app combines synthetic asset, maintenance, inspection, and failure data to demonstrate transparent risk scoring, maintenance analytics, knowledge graph thinking, and source-backed assistant answers.
 
-## Project Goal
+## Why I Built It
 
-Industrial companies often manage large volumes of asset information across spreadsheets, maintenance systems, inspection reports, engineering documents, and shutdown plans.
-
-This project demonstrates a simplified version of an asset intelligence system that can:
-
-* Combine asset, maintenance, inspection, and failure data
-* Rank assets using transparent risk scoring
-* Show maintenance and failure history for each asset
-* Connect assets to work orders, inspections, and failures using a knowledge graph structure
-* Provide a basic assistant interface for asking questions about asset risk and maintenance history
+Industrial teams often need to prioritise maintenance decisions using fragmented data from asset registers, work orders, inspections, and failure history. I built this prototype to show how data science and AI-style retrieval patterns can make asset risk easier to explain and investigate.
 
 ## Features
 
-### 1. Asset Overview
+- Asset Overview: plant-level metrics, asset counts, risk summary, and asset register.
+- Risk Ranking: explainable risk scores with Low, Medium, High, and Critical levels.
+- Asset Detail: drill-down into work orders, inspections, failures, and risk reasons.
+- Knowledge Graph: NetworkX graph linking assets to work orders, inspections, failures, and related equipment.
+- AI Assistant: deterministic source-backed answers over the CSV data.
+- About Project: context on industrial asset intelligence, maintenance analytics, RAG-style answering, and synthetic data.
 
-Shows key plant-level metrics:
+## Risk Scoring
 
-* Total assets
-* High-criticality assets
-* Open work orders
-* Total downtime hours
-* Asset count by equipment type
+The `calculate_risk_scores()` function considers:
 
-### 2. Risk Ranking
+- Asset criticality
+- Open high or critical work orders
+- Latest inspection condition score
+- Total downtime from work orders and failures
+- Failure history
+- Repeated failures on the same asset
 
-Ranks assets using a transparent rule-based risk score.
-
-The risk score considers:
-
-* Asset criticality
-* Open high-priority or critical work orders
-* Poor inspection condition scores
-* Total downtime
-* Failure history
-
-Each risk score includes a reason, so the result is explainable rather than a black-box prediction.
-
-### 3. Asset Detail View
-
-Allows the user to select an asset and view:
-
-* Asset information
-* Risk explanation
-* Work order history
-* Inspection findings
-* Failure events
-
-### 4. Knowledge Graph
-
-Creates a simple graph connecting:
-
-* Assets
-* Work orders
-* Inspections
-* Failure events
-* Related equipment
-
-Example relationships:
-
-```text
-Asset -> HAS_WORK_ORDER -> Work Order
-Asset -> HAS_INSPECTION -> Inspection
-Asset -> HAD_FAILURE -> Failure Event
-Asset -> CONNECTED_TO -> Related Asset
-```
-
-### 5. AI Assistant
-
-Includes a simple assistant interface that can answer questions such as:
-
-```text
-Which assets are high risk?
-Why is C-201 high risk?
-Show maintenance history of P-101.
-Which assets caused the most downtime?
-Which assets need urgent attention?
-```
-
-The current version uses deterministic Python logic over structured data. Future versions can extend this into a proper RAG system using inspection notes, maintenance documents, embeddings, and source-backed answers.
-
-## Screenshots
-
-### Asset Overview
-
-![Asset Overview](docs/screenshots/asset_overview.png)
-
-### Risk Ranking
-
-![Risk Ranking](docs/screenshots/risk_ranking.png)
-
-### AI Assistant
-
-![AI Assistant](docs/screenshots/ai_assistant.png)
-
-### Knowledge Graph
-
-![Knowledge Graph](docs/screenshots/knowledge_graph.png)
+Each asset receives a transparent `risk_reason` so the ranking can be explained without treating the score as a black box.
 
 ## Tech Stack
 
-* Python
-* Pandas
-* Streamlit
-* Plotly
-* NetworkX
-* Matplotlib
-* CSV-based asset and maintenance data
+- Python
+- Streamlit
+- Pandas
+- Plotly
+- NetworkX
+- Matplotlib
+- CSV data
 
 ## Project Structure
 
 ```text
 asset-intelligence-rag-demo/
-│
-├── data/
-│   ├── assets.csv
-│   ├── work_orders.csv
-│   ├── inspections.csv
-│   └── failure_events.csv
-│
-├── docs/
-│   └── screenshots/
-│       ├── asset_overview.png
-│       ├── risk_ranking.png
-│       ├── ai_assistant.png
-│       └── knowledge_graph.png
-│
-├── app.py
-├── requirements.txt
-├── README.md
-└── .gitignore
+|-- app.py
+|-- requirements.txt
+|-- README.md
+|-- data/
+|   |-- assets.csv
+|   |-- work_orders.csv
+|   |-- inspections.csv
+|   `-- failure_events.csv
+|-- src/
+|   |-- data_loader.py
+|   |-- risk_scoring.py
+|   |-- assistant.py
+|   `-- graph_builder.py
+`-- docs/
+    `-- screenshots/
+        |-- risk_ranking.png
+        `-- ai_assistant.png
 ```
-
-## Data Used
-
-The project uses small synthetic sample data for demonstration purposes.
-
-The sample dataset includes:
-
-* Asset register
-* Maintenance work orders
-* Inspection findings
-* Failure events
-* Downtime and cost information
-
-No real company or operational data is used.
 
 ## How to Run
 
-Clone the repository:
-
-```bash
-git clone https://github.com/ra-onez/asset-intelligence-rag-demo.git
-cd asset-intelligence-rag-demo
-```
-
-Create a virtual environment:
+Create and activate a virtual environment:
 
 ```bash
 python -m venv .venv
-```
-
-Activate the environment on Windows:
-
-```bash
 .venv\Scripts\activate
 ```
 
@@ -178,47 +78,48 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Run the Streamlit app:
+Run the app from the project root:
 
 ```bash
 streamlit run app.py
 ```
 
-Open the local URL shown in the terminal, usually:
+Streamlit will print a local URL, usually `http://localhost:8501`.
 
-```text
-http://localhost:8501
-```
+## Example Questions
 
-## Why This Project Matters
+The AI Assistant supports questions such as:
 
-Asset-intensive industries depend on reliable equipment, maintenance planning, inspection quality, and risk visibility. However, asset data is often fragmented across multiple systems and documents.
+- Which assets are high risk?
+- Why is C-201 high risk?
+- Why is P-101 high risk?
+- Show maintenance history of P-101
+- Which assets caused the most downtime?
+- Which assets have open work orders?
+- Which assets need urgent attention?
+- What inspection findings exist for HX-401?
 
-This prototype explores how data science and AI can help engineers and maintenance teams answer practical questions such as:
+Answers include supporting sources such as `assets.csv: C-201`, `work_orders.csv: WO-005`, `inspections.csv: IN-002`, and `failure_events.csv: F-003`.
 
-* Which assets need urgent attention?
-* Why is an asset considered high risk?
-* What failures have occurred in the past?
-* Which work orders are still open?
-* Which assets caused the most downtime?
-* How can asset knowledge be connected and made easier to search?
+## Screenshots
+
+### Risk Ranking
+
+![Risk Ranking](docs/screenshots/risk_ranking.png)
+
+### AI Assistant
+
+![AI Assistant](docs/screenshots/ai_assistant.png)
 
 ## Future Improvements
 
-Planned improvements include:
+- Add more realistic asset hierarchy and equipment relationships.
+- Add richer synthetic inspection narratives and maintenance notes.
+- Add vector search over maintenance documents for a fuller RAG workflow.
+- Add trend charts for inspection condition and downtime over time.
+- Add predictive maintenance modelling once more historical data exists.
+- Add deployment packaging with Docker or Streamlit Community Cloud.
 
-* Add proper RAG over maintenance and inspection documents
-* Use ChromaDB or FAISS for vector search
-* Add source-backed answers for the AI assistant
-* Move the knowledge graph to Neo4j
-* Add predictive maintenance modelling
-* Add shutdown planning and schedule-risk analysis
-* Add more realistic asset hierarchy and equipment relationships
-* Add Power BI or advanced dashboard export
-* Add Docker support for easier deployment
+## Data Note
 
-## Author
-
-Rahul Chaudhary
-Master of Data Science, University of Western Australia
-B.Tech Chemical Engineering, IIT Madras
+All data is synthetic and used only for demonstration. It does not represent any real company, plant, equipment fleet, or operational system.
